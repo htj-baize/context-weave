@@ -1,0 +1,20 @@
+{
+  "binding_kind": "target_binding",
+  "context_id": "ctx_demo_001",
+  "target_id": "tgt_demo_001",
+  "target_version": "v1",
+  "satisfied_inputs": [
+    "title",
+    "summary",
+    "tone"
+  ],
+  "missing_required_inputs": [],
+  "projected_payload": {
+    "title": "Jiangnan Notes",
+    "summary": "A quiet travel log along the river market.",
+    "tone": "misty"
+  },
+  "extensions": {
+    "schema_ref": "demo.schema.v1"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "target_kind": "standard_target",
+  "target_id": "tgt_demo_002",
+  "target_version": "v1",
+  "schema_ref": "demo.schema.v1",
+  "required_inputs": [
+    "title",
+    "summary",
+    "era"
+  ],
+  "optional_inputs": [
+    "tone"
+  ],
+  "constraints": {
+    "max_items": 3
+  },
+  "extensions": {}
+}

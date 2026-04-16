@@ -1,0 +1,18 @@
+{
+  "binding_kind": "target_binding",
+  "context_id": "ctx_demo_001",
+  "target_id": "tgt_demo_001",
+  "target_version": "v1",
+  "satisfied_inputs": [
+    "title"
+  ],
+  "missing_required_inputs": [
+    "summary"
+  ],
+  "projected_payload": {
+    "title": "Jiangnan Notes"
+  },
+  "extensions": {
+    "schema_ref": "demo.schema.v1"
+  }
+}

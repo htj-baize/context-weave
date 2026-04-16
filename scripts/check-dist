@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+DIST_DIR="${ROOT_DIR}/dist"
+PYTHON_BIN="${ROOT_DIR}/.venv/bin/python"
+
+if [ ! -x "${PYTHON_BIN}" ]; then
+  echo "ContextWeave is not bootstrapped yet." >&2
+  echo "Run: ./scripts/bootstrap" >&2
+  exit 1
+fi
+
+if [ ! -d "${DIST_DIR}" ]; then
+  echo "dist/ does not exist. Run: ./scripts/build" >&2
+  exit 1
+fi
+
+"${PYTHON_BIN}" - "${ROOT_DIR}" <<'PY'
+from __future__ import annotations
+
+import sys
+import tarfile
+import zipfile
+from pathlib import Path
+
+root = Path(sys.argv[1])
+dist = root / "dist"
+wheel_files = sorted(dist.glob("*.whl"))
+sdist_files = sorted(dist.glob("*.tar.gz"))
+
+if not wheel_files or not sdist_files:
+    raise SystemExit("dist/ must contain both a wheel and an sdist")
+
+wheel = wheel_files[-1]
+sdist = sdist_files[-1]
+
+def ensure_members(names: list[str], required_prefixes: list[str], artifact: str) -> None:
+    missing = [prefix for prefix in required_prefixes if not any(name.startswith(prefix) for name in names)]
+    if missing:
+        raise SystemExit(f"{artifact} is missing expected content prefixes: {missing}")
+
+with zipfile.ZipFile(wheel) as zf:
+    wheel_names = zf.namelist()
+ensure_members(
+    wheel_names,
+    [
+        "context_weave/",
+        "context_weave-",
+    ],
+    wheel.name,
+)
+
+with tarfile.open(sdist, "r:gz") as tf:
+    sdist_names = tf.getnames()
+root_prefix = sdist_names[0].split("/", 1)[0] + "/"
+ensure_members(
+    sdist_names,
+    [
+        root_prefix + "src/context_weave/",
+        root_prefix + "docs/",
+        root_prefix + "skills/",
+        root_prefix + "README.md",
+        root_prefix + "pyproject.toml",
+    ],
+    sdist.name,
+)
+
+print("dist check passed")
+print(f"wheel: {wheel.name}")
+print(f"sdist: {sdist.name}")
+PY

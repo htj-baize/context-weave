@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+VENV_DIR="${ROOT_DIR}/.venv"
+
+find_python() {
+  local shell_bin="${SHELL:-}"
+  local candidate
+
+  if [ -n "${PYTHON_BIN:-}" ]; then
+    printf '%s\n' "${PYTHON_BIN}"
+    return 0
+  fi
+
+  if [ -z "${shell_bin}" ] || [ ! -x "${shell_bin}" ]; then
+    return 1
+  fi
+
+  for candidate in python3.12 python3.11; do
+    local resolved
+    resolved="$("${shell_bin}" -lic "command -v ${candidate} 2>/dev/null || true" | tail -n 1)"
+    if [ -n "${resolved}" ] && [ -x "${resolved}" ]; then
+      printf '%s\n' "${resolved}"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+if ! PYTHON_BIN="$(find_python)"; then
+  echo "ContextWeave bootstrap requires python3.12 or python3.11 from your shell environment." >&2
+  echo "Set PYTHON_BIN=/abs/path/to/python if you want to override detection." >&2
+  exit 1
+fi
+
+echo "Using Python: ${PYTHON_BIN}"
+"${PYTHON_BIN}" --version
+
+"${PYTHON_BIN}" - <<'PY'
+import sys
+if sys.version_info < (3, 11):
+    raise SystemExit("ContextWeave bootstrap requires Python 3.11 or newer.")
+PY
+
+if [ ! -d "${VENV_DIR}" ]; then
+  "${PYTHON_BIN}" -m venv "${VENV_DIR}"
+fi
+
+"${VENV_DIR}/bin/python" -m pip install --default-timeout=120 "setuptools>=68" wheel
+"${VENV_DIR}/bin/python" -m pip install --no-build-isolation -e "${ROOT_DIR}[dev]"
+
+echo
+echo "Bootstrap complete."
+echo "Next:"
+echo "  ./scripts/cw list"
+echo "  ./scripts/cw doctor --project-root ."

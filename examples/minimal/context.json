@@ -1,0 +1,30 @@
+{
+  "context_kind": "standard_context",
+  "context_id": "ctx_demo_001",
+  "context_version": "v1",
+  "scope": "source_state",
+  "payload": {
+    "title": "Jiangnan Notes",
+    "summary": "A quiet travel log along the river market.",
+    "tone": "misty"
+  },
+  "trace": {
+    "source_refs": [
+      {
+        "source_kind": "source_state",
+        "source_ref": "./examples/minimal/context.source.json"
+      }
+    ],
+    "derived_from": [],
+    "transforms": [
+      {
+        "kind": "build",
+        "timestamp": "2026-01-01T00:00:00+00:00",
+        "notes": "starter"
+      }
+    ]
+  },
+  "extensions": {
+    "profile": "starter"
+  }
+}

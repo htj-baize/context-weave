@@ -1,0 +1,5 @@
+{
+  "source_kind": "source_state",
+  "source_ref": "./examples/minimal/context.source.json",
+  "build_profile": "starter"
+}
