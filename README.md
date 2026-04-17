@@ -76,6 +76,36 @@ cd /path/to/context-weave
 ./scripts/build
 ```
 
+## Local Development
+
+Recommended environment:
+
+- `Python 3.11` or `Python 3.12`
+
+Setup from the repository root:
+
+```bash
+cd /path/to/context-weave
+./scripts/bootstrap
+```
+
+Minimal verification:
+
+```bash
+./scripts/cw doctor --project-root .
+./scripts/cw list
+```
+
+Useful commands:
+
+```bash
+./scripts/run-smoke
+./.venv/bin/python -m pytest -q
+./scripts/build
+```
+
+If you want to use a specific Python interpreter, set `PYTHON_BIN=/abs/path/to/python` before running `./scripts/bootstrap`.
+
 命令入口：
 
 ```bash
